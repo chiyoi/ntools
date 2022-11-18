@@ -9,7 +9,7 @@ def list_blobs(container_client: ContainerClient):
 def post(container_client: ContainerClient, blob_name: str, file_path: str):
     blob_client = container_client.get_blob_client(blob_name)
     with open(file_path, "rb") as f:
-        blob_client.upload_blob(f)
+        blob_client.upload_blob(f, overwrite=True)
     print("post completed.")
 
 
