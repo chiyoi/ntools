@@ -1,0 +1,37 @@
+#!/bin/zsh
+usage='usage: visrc [options] <filename>
+    alias for vi $(which <filename>) if exist
+options:
+    --help - show this usage message
+returns:
+    0 - ok
+    1 - usage error
+    2 - `which` error
+    3 - source not found
+    4 - vi exited with error'
+
+if test $# -ne 1; then
+    echo $usage
+    return 1
+fi
+
+if test $1 = '--help'; then
+    echo $usage
+    return 0
+fi
+
+fp=$(which $1)
+if test $? -ne 0; then
+    echo $fp
+    return 2
+fi
+if test ! -f $fp; then
+    echo "$fp: regular file not exist"
+    return 3
+fi
+
+vi $fp; err=$?
+if test $err -ne 0; then
+    echo "vi exited with $err"
+    return 4
+fi

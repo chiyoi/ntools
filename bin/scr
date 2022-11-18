@@ -1,16 +1,27 @@
 #!/bin/zsh
-usage='usage: scr <script-name>
-    alias for "./scripts/<script-name>.sh"
+usage='usage: scr [options] <script-name>
+    alias for "zsh ./scripts/<script-name>.sh"
+    alias for scr -l if <script-name> not provided
 options:
     --help     - show this usage message
-    --list, -l - show a list of scripts'
+    --list, -l - show a list of scripts
+returns:
+    0 - ok
+    1 - usage error
+    2 - script not exist
+    3 - script exit with error'
 
 if test $# -eq 0; then
     scr -l
     return $?
 fi
 
-if test $# -ne 1 || test $1 = '--help'; then
+if test $# -ne 1; then
+    echo $usage
+    return 1
+fi
+
+if test $1 = '--help'; then
     echo $usage
     return 0
 fi
@@ -31,9 +42,13 @@ fi
 
 fp=$(echo $tmpl | sed -E "s/%v/$1/g")
 
-if test ! -f $fp -o ! -x $fp; then
+if test ! -f $fp; then
     echo "script not exist: $fp"
     return 2
 fi
 
-$filename
+zsh $filename; err=$?
+if $err -ne 0; then
+    echo "script exited with $err"
+    return 3
+fi

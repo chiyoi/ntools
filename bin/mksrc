@@ -2,7 +2,11 @@
 usage='usage: mksrc [options] <filepath>
     create regular file <filepath> if not exist
 options:
-    --help - show this usage message'
+    --help - show this usage message
+returns:
+    0 - ok
+    1 - usage error
+    2 - file exists'
 
 if test $# -ne 1; then
     echo $usage
