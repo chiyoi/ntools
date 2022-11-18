@@ -3,5 +3,9 @@ aliases for my commonly used commands
 
 ---
 environments:
-    export PATH=~/bin:$PATH
-    export PYTHONPATH=~/lib/python:$PYTHONPATH
+```sh
+export PATH=~/bin:$PATH 
+export PYTHONPATH=~/lib/python:$PYTHONPATH
+```
+files:
+* config: `~/.ntools.cfg`
