@@ -32,13 +32,16 @@ def main():
             print(usage)
         exit(d)
 
-    if (cmd := d.cmd) == "help":
-        print(usage)
-    elif cmd == "list":
-        list_blobs(d.container_client)
-    elif cmd == "post":
-        post(d.container_client, d.blob_name, d.file_path)
-    elif cmd == "fetch":
-        fetch(d.container_client, d.blob_name, d.file_path)
-    elif cmd == "remove":
-        remove(d.container_client, d.blob_name)
+    try:
+        if (cmd := d.cmd) == "help":
+            print(usage)
+        elif cmd == "list":
+            list_blobs(d.container_client)
+        elif cmd == "post":
+            post(d.container_client, d.blob_name, d.file_path)
+        elif cmd == "fetch":
+            fetch(d.container_client, d.blob_name, d.file_path)
+        elif cmd == "remove":
+            remove(d.container_client, d.blob_name)
+    except AttributeError as err:
+        print("missing arg: {}".format(err))

@@ -47,8 +47,8 @@ if test ! -f $fp; then
     return 2
 fi
 
-zsh $filename; err=$?
-if $err -ne 0; then
+zsh $fp; err=$?
+if test $err -ne 0; then
     echo "script exited with $err"
     return 3
 fi
