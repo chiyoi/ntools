@@ -1,3 +1,7 @@
 #!/bin/zsh
+if test "$1" = '--help'; then
+    echo "alias for mksrc then chmod+x"
+    return 0
+fi
 mksrc $1 || return $?
 chmod +x $1

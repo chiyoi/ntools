@@ -6,22 +6,33 @@ options:
 returns:
     0 - ok
     1 - usage error
-    2 - file exists'
+    2 - file exists
+    3 - touch exited with error'
 
-if test $# -ne 1; then
+if test $# -eq 0; then
     echo $usage
     return 1
 fi
 
-if test $1 = '--help'; then
-    echo $usage
+if test $# -eq 1; then
+    if test $1 = '--help'; then
+        echo $usage
+        return 0
+    fi
+
+    if test -e $1; then
+        echo "$1: file exists"
+        return 2
+    fi
+
+    touch $1; err=$?
+    if test $err -ne 0; then
+        echo "touch exited with $err"
+        return 3
+    fi
+    echo "$1 created."
     return 0
 fi
 
-if test -e $1; then
-    echo "$1: file exists"
-    return 2
-fi
-
-touch $1 || return $?
-echo "$1 created."
+echo $usage
+return 1

@@ -6,21 +6,32 @@ options:
 returns:
     0 - ok
     1 - usage error
-    2 - log not exist'
+    2 - log not exist
+    3 - tail exited with error'
 
-if test $# -ne 1; then
+if test $# -eq 0; then
     echo $usage
     return 1
 fi
 
-if test $1 = '--help'; then
-    echo $usage
+if test $# -eq 1; then
+    if test $1 = '--help'; then
+        echo $usage
+        return 0
+    fi
+
+    fp="/usr/local/var/log/$1.log"
+    if test ! -e $fp; then
+        echo "$fp: log not exist"
+        return 2
+    fi
+    tail -f $fp; err=$?
+    if test $err -ne 0; then
+        echo "tail exited with $err"
+        return 3
+    fi
     return 0
 fi
 
-fp="/usr/local/var/log/$1.log"
-if test ! -e $fp; then
-    echo "$fp: log not exist"
-    return 2
-fi
-tail -f $fp
+echo $usage
+return 1
