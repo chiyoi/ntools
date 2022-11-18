@@ -102,7 +102,7 @@ ask_rm() {
         return 0
     fi
 
-    echo -n "overwrite $target? (y/n [n]) "; read resp
+    echo -n "overwrite $target? [y/N] "; read resp
     if test "$resp" = 'y' -o "$resp" = 'Y' -o "$resp" = 'yes'; then
         rm -rf $target; err=$?
         if test $err -ne 0; then
