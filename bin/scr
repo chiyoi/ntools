@@ -1,7 +1,7 @@
 #!/bin/zsh
 usage='usage: scr [options] <script-name>
     alias for "zsh ./scripts/<script-name>.sh"
-    alias for scr -l if <script-name> not provided
+    alias to scr -l if <script-name> not provided
 options:
     --help     - show this usage message
     --list, -l - show a list of scripts
@@ -12,7 +12,7 @@ returns:
     3 - script exit with error'
 
 if test $# -eq 0; then
-    scr -l
+    $0 -l
     return $?
 fi
 
