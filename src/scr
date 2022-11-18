@@ -1,0 +1,39 @@
+#!/bin/zsh
+usage='usage: scr <script-name>
+    alias for "./scripts/<script-name>.sh"
+options:
+    --help     - show this usage message
+    --list, -l - show a list of scripts'
+
+if test $# -eq 0; then
+    scr -l
+    return $?
+fi
+
+if test $# -ne 1 || test $1 = '--help'; then
+    echo $usage
+    return 0
+fi
+
+tmpl="./scripts/%v.sh"
+
+if test $1 = '--list' -o $1 = '-l'; then
+    pattern=$(echo $tmpl | sed -E 's/%v/*/g')
+    search=$(echo $tmpl | sed -E 's/%v/(.*)/g')
+    glob=$(find . -maxdepth 2 -path $pattern) || return 1
+    if test -z $glob; then
+        echo "no script found"
+        return 0
+    fi
+    echo $glob | sed -E "s;$search;\\1;g"
+    return 0
+fi
+
+fp=$(echo $tmpl | sed -E "s/%v/$1/g")
+
+if test ! -f $fp -o ! -x $fp; then
+    echo "script not exist: $fp"
+    return 2
+fi
+
+$filename

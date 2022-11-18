@@ -1,0 +1,23 @@
+#!/bin/zsh
+usage='usage: mksrc [options] <filepath>
+    create regular file <filepath> if not exist
+options:
+    --help - show this usage message'
+
+if test $# -ne 1; then
+    echo $usage
+    return 1
+fi
+
+if test $1 = '--help'; then
+    echo $usage
+    return 0
+fi
+
+if test -e $1; then
+    echo "$1: file exists"
+    return 2
+fi
+
+touch $1 || return $?
+echo "$1 created."

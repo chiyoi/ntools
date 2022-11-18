@@ -1,0 +1,3 @@
+#!/bin/zsh
+mksrc $1 || return $?
+chmod +x $1

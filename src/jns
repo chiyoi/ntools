@@ -1,0 +1,17 @@
+#!/bin/zsh
+usage='usage: jns [options] <proc_name>
+    alias for "tail -f /usr/local/var/log/<proc_name>.log"
+options:
+    --help - show this usage message'
+
+if test $# -ne 1 || test $1 = '--help'; then
+    echo $usage
+    return 1
+fi
+
+fp="/usr/local/var/log/$1.log"
+if test ! -e $fp; then
+    echo "$fp: log not exist"
+    return 2
+fi
+tail -f $fp
