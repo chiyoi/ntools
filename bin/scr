@@ -1,34 +1,81 @@
 #!/bin/zsh
-usage='usage: scr [options] <script-name>
-    alias for "zsh ./scripts/<script-name>.sh"
-    alias to scr -l if <script-name> not provided
-options:
-    --help     - show this usage message
-    --list, -l - show a list of scripts
+usage='usage: scr [<script> | <command>] [-- <args>]
+    run a script like .../scripts/<script>.sh
+    run command "list" if no arg provided
+commands:
+    help     - show this usage message
+    list, ls - show a list of scripts
 returns:
     0 - ok
     1 - usage error
     2 - script not exist
-    3 - script exit with error'
+    3 - script exit with error
+    4 - scripts dir not found'
 
-if test $# -eq 0; then
-    $0 -l
-    return $?
+# data
+help=false
+list=false
+cmd=""
+args=""
+
+# text
+init() {
+    if test $# -eq 0; then
+        list=true
+        return 0
+    fi
+    while test $# -gt 0; do
+        case $1 in
+            help | --help)
+                help=true
+                return 0
+                ;;
+            list | ls)
+                list=true
+                return 0
+                ;;
+            --)
+                shift
+                args=$@
+                return 0
+                ;;
+            *)
+                if test -n "$cmd"; then
+                    echo "more than one scripts are provided"
+                    return 1
+                fi
+                cmd=$1
+                ;;
+        esac
+        shift
+    done
+    test -z "$cmd" && return 1
+    return 0
+}
+
+# main
+init $@; err=$?
+if test $err -ne 0; then
+    test $err -eq 1 && echo $usage
+    return $err
 fi
 
-if test $# -ne 1; then
-    echo $usage
-    return 1
-fi
-
-if test $1 = '--help'; then
+if $help; then
     echo $usage
     return 0
 fi
 
+while test ! -d ./scripts; do
+    if test $(pwd) = '/'; then
+        echo 'scripts dir not found in current directory or any parent directory'
+        return 4
+    fi
+    cd ..
+done
+
 tmpl="./scripts/%v.sh"
 
-if test $1 = '--list' -o $1 = '-l'; then
+if $list; then
     pattern=$(echo $tmpl | sed -E 's/%v/*/g')
     search=$(echo $tmpl | sed -E 's/%v/(.*)/g')
     glob=$(find . -maxdepth 2 -path $pattern) || return 1
@@ -47,7 +94,7 @@ if test ! -f $fp; then
     return 2
 fi
 
-zsh $fp; err=$?
+zsh $fp $args; err=$?
 if test $err -ne 0; then
     echo "script exited with $err"
     return 3
