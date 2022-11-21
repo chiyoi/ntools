@@ -11,7 +11,7 @@ c() {
     elif test -n "$resp"; then
         echo $resp
     fi
-    return $ret
+    return $err
 }
 
 export PATH=~/bin:$PATH 
