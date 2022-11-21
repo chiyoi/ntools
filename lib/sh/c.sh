@@ -50,7 +50,7 @@ with open(fp, 'w') as f:
 
 scr_ls="$scr_common
 for k in cfg.options('c'):
-    print('{}={}'.format(k, cfg.get('c', 'neko03')))
+    print('{}={}'.format(k, cfg.get('c', k)))
 "
 
 scr_get="$scr_common
