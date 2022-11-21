@@ -1,4 +1,3 @@
-#!/bin/zsh
 usage='usage: c [<command> | <shortcut>] ...
     make cl shortcut
 commands:
@@ -13,58 +12,52 @@ commands:
 returns:
     0 - ok
     1 - usage error
-    2 - shortcut not exist
+    2 - sub-command exited with error
 files:
     $HOME/.ntools.cfg
         [c]
         <shortcut>
         ...'
 
-if test $# -lt 1; then
-    echo $usage
-    return 1
+if test $# -eq 0; then
+    echo "path:"
+    return 0
 fi
 
-scr_reg="from configparser import ConfigParser
+scr_common="from configparser import ConfigParser, DuplicateSectionError, NoOptionError
 import os.path as path
 
 fp = path.expanduser('~/.ntools.cfg')
 cfg = ConfigParser()
 cfg.read(fp)
+try:
+    cfg.add_section('c')
+except DuplicateSectionError:
+    pass
+"
 
+scr_reg="$scr_common
 cfg.set('c', '$2', '$3')
 with open(fp, 'w') as f:
     cfg.write(f)
 "
-scr_rm="from configparser import ConfigParser
-import os.path as path
 
-fp = path.expanduser('~/.ntools.cfg')
-cfg = ConfigParser()
-cfg.read(fp)
-
+scr_rm="$scr_common
 cfg.remove_option('c', '$2')
 with open(fp, 'w') as f:
     cfg.write(f)
 "
-scr_ls="from configparser import ConfigParser
-import os.path as path
 
-fp = path.expanduser('~/.ntools.cfg')
-cfg = ConfigParser()
-cfg.read(fp)
-
+scr_ls="$scr_common
 for k in cfg.options('c'):
     print('{}={}'.format(k, cfg.get('c', 'neko03')))
 "
-scr_get="from configparser import ConfigParser
-import os.path as path
 
-fp = path.expanduser('~/.ntools.cfg')
-cfg = ConfigParser()
-cfg.read(fp)
-
-print(cfg.get('c', '$1'))
+scr_get="$scr_common
+try:
+    print(cfg.get('c', '$1'))
+except NoOptionError:
+    exit(1)
 "
 
 case $1 in
@@ -74,23 +67,23 @@ case $1 in
             return 1
         fi
         python -c $scr_reg
-        return
+        return 0
         ;;
     -rm)
         if test $# -ne 2; then
             echo $usage
             return 1
         fi
-        python -c $scr_rm 2>/dev/null
-        return
+        python -c $scr_rm
+        return 0
         ;;
     -ls)
         if test $# -ne 1; then
             echo $usage
             return 1
         fi
-        python -c $scr_ls 2>/dev/null
-        return
+        python -c $scr_ls
+        return 0
         ;;
     -help | --help)
         echo $usage
@@ -98,9 +91,10 @@ case $1 in
         ;;
 esac
 
-fp=$(python -c $scr_get 2>/dev/null) 
+fp=$(python -c $scr_get)
 if test $? -ne 0; then
-    echo "shortcut not exist: $1"
-    return 2
+    echo "path:$1"
+    return 0
 fi
-cl $fp
+echo "path:$fp"
+return 0

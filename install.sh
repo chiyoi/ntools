@@ -1,11 +1,11 @@
 #!/bin/zsh
 usage='usage: install.sh [options]
     copy scripts to ~/bin
-    default to set `--yes`
+    default to set `-yes`
 options:
-    --help    - show this usage message
-    --yes, -y - default to input `y` for prompts
-    -i        - ask for input when prompts
+    -help    - show this usage message
+    -yes, -y - default to input `y` for prompts
+    -i       - ask for input when prompts
 returns:
     0 - ok
     1 - usage error
@@ -29,8 +29,8 @@ init() {
         return 2
     fi
 
-    mkdir_if_not_exist $bin || return $?
-    mkdir_if_not_exist $lib || return $?
+    mkdir_if_not_exist $bin || return
+    mkdir_if_not_exist $lib || return
 
     case $# in
         0)
@@ -38,11 +38,11 @@ init() {
             ;;
         1)
             case $1 in
-                '--help')
+                '-help' | '--help')
                     help=true
                     return 0
                     ;;
-                '--yes' | '-y')
+                '-yes' | '-y')
                     yes=true
                     return 0
                     ;;
@@ -148,14 +148,15 @@ copy_lib() {
 
 
 #main
-init $@ || return $?
+init $@ || return
 
 if $help; then
     echo $usage
     return 0
 fi
 
-copy_bin || return $?
-copy_lib python || return $?
-copy_lib scpt || return $?
-copy_lib templates || return $?
+copy_bin || return
+copy_lib python || return
+copy_lib scpt || return
+copy_lib templates || return
+copy_lib sh || return
