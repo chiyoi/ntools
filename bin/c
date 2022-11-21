@@ -1,0 +1,106 @@
+#!/bin/zsh
+usage='usage: c [<command> | <shortcut>] ...
+    make cl shortcut
+commands:
+    -reg  - register target path
+            usage  : c -reg <shortcut> <target-path>
+            example: c -reg neko03 ~/Projects/neko03
+    -rm   - remove registered shortcut
+            usage  : c -rm <shortcut>
+            example: c -rm neko03
+    -ls   - list shortcuts
+    -help - show this usage message
+returns:
+    0 - ok
+    1 - usage error
+    2 - shortcut not exist
+files:
+    $HOME/.ntools.cfg
+        [c]
+        <shortcut>
+        ...'
+
+if test $# -lt 1; then
+    echo $usage
+    return 1
+fi
+
+scr_reg="from configparser import ConfigParser
+import os.path as path
+
+fp = path.expanduser('~/.ntools.cfg')
+cfg = ConfigParser()
+cfg.read(fp)
+
+cfg.set('c', '$2', '$3')
+with open(fp, 'w') as f:
+    cfg.write(f)
+"
+scr_rm="from configparser import ConfigParser
+import os.path as path
+
+fp = path.expanduser('~/.ntools.cfg')
+cfg = ConfigParser()
+cfg.read(fp)
+
+cfg.remove_option('c', '$2')
+with open(fp, 'w') as f:
+    cfg.write(f)
+"
+scr_ls="from configparser import ConfigParser
+import os.path as path
+
+fp = path.expanduser('~/.ntools.cfg')
+cfg = ConfigParser()
+cfg.read(fp)
+
+for k in cfg.options('c'):
+    print('{}={}'.format(k, cfg.get('c', 'neko03')))
+"
+scr_get="from configparser import ConfigParser
+import os.path as path
+
+fp = path.expanduser('~/.ntools.cfg')
+cfg = ConfigParser()
+cfg.read(fp)
+
+print(cfg.get('c', '$1'))
+"
+
+case $1 in
+    -reg)
+        if test $# -ne 3; then
+            echo $usage
+            return 1
+        fi
+        python -c $scr_reg
+        return
+        ;;
+    -rm)
+        if test $# -ne 2; then
+            echo $usage
+            return 1
+        fi
+        python -c $scr_rm 2>/dev/null
+        return
+        ;;
+    -ls)
+        if test $# -ne 1; then
+            echo $usage
+            return 1
+        fi
+        python -c $scr_ls 2>/dev/null
+        return
+        ;;
+    -help | --help)
+        echo $usage
+        return 0
+        ;;
+esac
+
+fp=$(python -c $scr_get 2>/dev/null) 
+if test $? -ne 0; then
+    echo "shortcut not exist: $1"
+    return 2
+fi
+cl $fp

@@ -2,7 +2,7 @@
 usage='usage: mksrc [options] <filepath>
     create regular file <filepath> if not exist
 options:
-    --help - show this usage message
+    -help - show this usage message
 returns:
     0 - ok
     1 - usage error
@@ -15,7 +15,7 @@ if test $# -eq 0; then
 fi
 
 if test $# -eq 1; then
-    if test $1 = '--help'; then
+    if test $1 = '-help' -o $1 = '--help'; then
         echo $usage
         return 0
     fi

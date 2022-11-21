@@ -20,9 +20,9 @@ returns:
 files:
     $HOME/.ntools.cfg
         [azblob-io]
-            AccountName
-            AccountKey
-            BlobServiceUrl"""
+        AccountName
+        AccountKey
+        BlobServiceUrl"""
 
 
 def main():
