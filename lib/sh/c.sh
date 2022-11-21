@@ -1,5 +1,5 @@
 usage='usage: c [<command> | <shortcut>] ...
-    make cl shortcut
+    cl shortcuts
 commands:
     -reg  - register target path
             usage  : c -reg <shortcut> <target-path>
@@ -12,7 +12,6 @@ commands:
 returns:
     0 - ok
     1 - usage error
-    2 - sub-command exited with error
 files:
     $HOME/.ntools.cfg
         [c]
