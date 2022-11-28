@@ -51,5 +51,6 @@ def init() -> Union[Data, int]:
     credential = AzureNamedKeyCredential(account_name, account_key)
     blob_service_client = BlobServiceClient(blob_service_url, credential)
     d.container_client = blob_service_client.get_container_client(
-        containerName)
+        containerName
+    )
     return d

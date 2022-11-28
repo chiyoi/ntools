@@ -1,2 +1,2 @@
 #!/bin/zsh
-python -m azblob_io $@
+/usr/local/bin/python3.9 -m azblob_io $@
